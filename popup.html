@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Price Watcher</title>
+  <style>
+    :root {
+      /* Dark Theme (from image) */
+      --bg-color: #1A1F2E;
+      --card-bg-color: #293042;
+      --primary-text-color: #E8EAED;
+      --secondary-text-color: #969BA1;
+      --accent-color: #51b6a5; /* Teal */
+      --accent-color-hover: #45a695;
+      --accent-color-text: #FFFFFF; /* Text ontop of accent color */
+      --border-color: #3c4043;
+      --danger-color: #e57373;
+      --danger-hover-color: #d32f2f;
+      --shadow-color: rgba(0, 0, 0, 0.2);
+    }
+
+    body.light-mode {
+      /* Light Theme */
+      --bg-color: #F8F9FA;
+      --card-bg-color: #FFFFFF;
+      --primary-text-color: #202124;
+      --secondary-text-color: #5F6368;
+      --accent-color: #1A73E8; /* Blue */
+      --accent-color-hover: #1765c7;
+      --accent-color-text: #FFFFFF;
+      --border-color: #DADCE0;
+      --danger-color: #d93025;
+      --danger-hover-color: #c5221f;
+      --shadow-color: rgba(60, 64, 67, 0.15);
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      width: 320px;
+      margin: 0;
+      background-color: var(--bg-color);
+      color: var(--primary-text-color);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 520px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .header-container {
+      background-color: transparent;
+      padding: 16px;
+      flex-shrink: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      color: var(--primary-text-color);
+    }
+    
+    #siteInfo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #siteFavicon {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      border-radius: 4px;
+    }
+
+    #currentSiteHostname {
+      font-size: 14px;
+      color: var(--secondary-text-color);
+      word-break: break-all;
+    }
+
+    #page-content {
+      flex-grow: 1;
+      padding: 0 16px 16px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-controls {
+      display: flex;
+      margin-bottom: 16px;
+      background-color: var(--card-bg-color);
+      border-radius: 10px;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+
+    .filter-btn {
+      flex: 1;
+      background-color: transparent;
+      border: none;
+      color: var(--secondary-text-color);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .filter-btn.active {
+      background-color: var(--accent-color);
+      color: var(--accent-color-text);
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .loading-indicator, .no-history {
+      text-align: center;
+      color: var(--secondary-text-color);
+      padding: 40px 0;
+      font-style: italic;
+    }
+
+    .product-card {
+      background-color: var(--card-bg-color);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px var(--shadow-color);
+      display: flex;
+      flex-direction: column;
+      border: 2px solid transparent; /* Add transparent border to prevent layout shift */
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; /* Animate all changes */
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px); /* Increased lift */
+      box-shadow: 0 8px 20px var(--shadow-color); /* Enhanced shadow */
+      border-color: var(--accent-color); /* Highlight with accent color */
+    }
+    
+    .product-info-top {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      gap: 12px;
+    }
+
+    .product-image {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background-color: var(--border-color);
+    }
+
+    .product-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-text-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+      flex-grow: 1;
+      text-align: left;
+    }
+
+    .reset-product-button {
+      background: none;
+      border: none;
+      color: var(--secondary-text-color);
+      cursor: pointer;
+      font-size: 20px;
+      padding: 5px;
+      line-height: 1;
+      opacity: 0.8;
+      transition: color 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+    .reset-product-button svg {
+        width: 20px;
+        height: 20px;
+    }
+    .reset-product-button:hover {
+      color: var(--danger-color);
+      transform: scale(1.1);
+    }
+    
+    .product-info-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px 16px 16px;
+    }
+    
+    .product-price {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent-color);
+    }
+
+    .product-timestamp {
+      font-size: 13px;
+      color: var(--secondary-text-color);
+    }
+
+    .footer-buttons {
+      padding: 16px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      background-color: var(--bg-color);
+    }
+
+    .button-primary {
+      background-color: var(--accent-color);
+      color: var(--accent-color-text);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      width: 100%;
+    }
+    .button-primary:hover {
+      background-color: var(--accent-color-hover);
+    }
+
+    /* --- Modal Styles --- */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0s 0.2s; }
+    .modal-overlay.visible { opacity: 1; visibility: visible; transition: opacity 0.2s ease; }
+    .modal-dialog { background-color: var(--bg-color); padding: 24px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 5px 20px rgba(0,0,0,0.4); width: 80%; max-width: 300px; text-align: center; transform: scale(0.95); transition: transform 0.2s ease; }
+    .modal-overlay.visible .modal-dialog { transform: scale(1); }
+    #modalMessagePopup { margin: 0 0 20px 0; font-size: 15px; line-height: 1.5; color: var(--primary-text-color); }
+    .modal-actions { display: flex; justify-content: center; gap: 12px; }
+    .modal-btn { border: none; border-radius: 5px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.1s; }
+    #modalConfirmBtnPopup { background-color: var(--danger-color); color: white; }
+    #modalConfirmBtnPopup:hover { background-color: var(--danger-hover-color); }
+    #modalCancelBtnPopup { background-color: var(--card-bg-color); color: var(--primary-text-color); border: 1px solid var(--border-color); }
+    #modalCancelBtnPopup:hover { background-color: var(--border-color); }
+
+  </style>
+</head>
+<body>
+  <div class="header-container">
+    <h1>Price Watcher</h1>
+    <div id="siteInfo">
+      <img id="siteFavicon" src="" alt="Favicon" style="display: none;"/>
+      <span id="currentSiteHostname">Loading...</span>
+    </div>
+  </div>
+
+  <div id="page-content">
+    <div class="filter-controls" id="filterControls" style="display:none;">
+      <button id="filterCurrentBtn" class="filter-btn active">Current Product</button>
+      <button id="filterRecentBtn" class="filter-btn">Recent Products</button>
+    </div>
+
+    <div class="loading-indicator" id="loadingIndicator">Fetching history...</div>
+    <div id="productHistoryContainer"></div>
+    <div class="no-history" id="noHistoryMessage" style="display:none;"></div>
+  </div>
+
+  <div class="footer-buttons" id="dashboardPopupFooter">
+     <button id="openFullDashboardBtn" class="button-primary" title="See all your tracked products">View Full Dashboard</button>
+  </div>
+
+  <!-- Custom Confirmation Modal -->
+  <div id="confirmationModalPopup" class="modal-overlay">
+    <div class="modal-dialog">
+      <p id="modalMessagePopup"></p>
+      <div class="modal-actions">
+        <button id="modalCancelBtnPopup" class="modal-btn">Cancel</button>
+        <button id="modalConfirmBtnPopup" class="modal-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

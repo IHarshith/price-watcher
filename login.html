@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Watcher - Login/Signup</title>
+    <style>
+        :root {
+            --bg-color: #2c3e50;
+            --primary-text-color: #ecf0f1;
+            --secondary-text-color: #bdc3c7;
+            --accent-color: #3498db;
+            --card-bg-color: #34495e;
+            --border-color: #4a627a;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --input-bg-color: #3f556b;
+            --input-border-color: #5d748f;
+            --button-hover-bg-color: #2980b9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--primary-text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+        }
+
+        .auth-container {
+            background-color: var(--card-bg-color);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: var(--primary-text-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: var(--primary-text-color);
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: calc(100% - 24px); /* Account for padding */
+            padding: 12px;
+            border: 1px solid var(--input-border-color);
+            border-radius: 6px;
+            background-color: var(--input-bg-color);
+            color: var(--primary-text-color);
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            color: var(--primary-text-color); /* Default text color */
+        }
+
+        .message.success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success-color);
+            opacity: 1;
+        }
+
+        .message.error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger-color);
+            opacity: 1;
+        }
+
+        .switch-auth-text {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .switch-auth-text a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .switch-auth-text a:hover {
+            text-decoration: underline;
+        }
+
+        .form-section {
+            display: none; /* Hidden by default, toggled by JS */
+        }
+
+        .form-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Price Watcher</h2>
+
+        <div id="loginSection" class="form-section active">
+            <h3 style="margin-top: 0;">Login</h3>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email/Username</label>
+                    <input type="text" id="loginEmail" name="loginEmail" placeholder="Enter your email or username" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            <p class="switch-auth-text">Don't have an account? <a href="#" id="showSignup">Sign Up</a></p>
+        </div>
+
+        <div id="signupSection" class="form-section">
+            <h3 style="margin-top: 0;">Sign Up</h3>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupEmail">Email/Username</label>
+                    <input type="text" id="signupEmail" name="signupEmail" placeholder="Choose a username or email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" name="signupPassword" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary">Sign Up</button>
+            </form>
+            <p class="switch-auth-text">Already have an account? <a href="#" id="showLogin">Login</a></p>
+        </div>
+
+        <div id="authMessage" class="message" style="opacity:0;"></div>
+    </div>
+    <script src="login.js"></script>
+</body>
+</html>
