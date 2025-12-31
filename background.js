@@ -18,7 +18,7 @@ function generateUUID() {
 chrome.runtime.onInstalled.addListener((details) => {
   console.log("Price Watcher extension installed!");
   if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
-    chrome.tabs.create({ url: chrome.runtime.getURL('landing.html') }); // Open landing page on install
+    chrome.tabs.create({ url: chrome.runtime.getURL('index.html') }); // Open landing page on install
   }
 
   // Create an alarm for periodic alert checks
