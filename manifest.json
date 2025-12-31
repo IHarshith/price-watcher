@@ -39,7 +39,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["login.html", "dashboard_full.html", "landing.html"],
+      "resources": ["login.html", "dashboard_full.html", "index.html"],
       "matches": ["<all_urls>"]
     }
   ],
