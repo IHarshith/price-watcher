@@ -15,6 +15,7 @@
             --card-bg-color: #293042;
             --border-color: #4a627a;
             --shadow-color: rgba(0,0,0,0.4);
+            --success-color: #2ecc71; /* Green for success */
         }
 
         body.light-mode {
@@ -27,6 +28,7 @@
             --card-bg-color: #ffffff;
             --border-color: #dee2e6;
             --shadow-color: rgba(0,0,0,0.1);
+            --success-color: #28a745; /* Slightly different green for light mode */
         }
 
         body {
@@ -126,6 +128,35 @@
             transform: translateY(-2px);
         }
 
+        /* New: Download Message Styles */
+        .download-message {
+            margin-top: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out, background-color 0.3s, color 0.3s;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--primary-text-color);
+            border: 1px solid transparent;
+        }
+        .download-message.visible {
+            opacity: 1;
+        }
+        .download-message.success {
+            background-color: color-mix(in srgb, var(--success-color) 20%, transparent);
+            color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        body.light-mode .download-message.success {
+            background-color: color-mix(in srgb, var(--success-color) 15%, transparent);
+            color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
         .footer-note {
             margin-top: 50px;
             font-size: 0.9em;
@@ -149,6 +180,10 @@
             .cta-button {
                 padding: 12px 25px;
                 font-size: 1em;
+            }
+            .download-message {
+                font-size: 1em;
+                padding: 12px 18px;
             }
         }
     </style>
@@ -181,6 +216,9 @@
 
         <button id="ctaButton" class="cta-button">Open Price Watcher Dashboard</button>
 
+        <!-- New: Custom Download Message -->
+        <div id="downloadMessage" class="download-message" style="opacity:0;"></div>
+
         <p class="footer-note" id="judgeInstructions">
             <strong>For Judges:</strong> To view the extension, ensure Developer mode is enabled in <code style="background-color: var(--bg-color); padding: 3px 6px; border-radius: 4px;">chrome://extensions</code>, then click "Load unpackaged" and select this project's root folder.
         </p>
@@ -190,6 +228,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const ctaButton = document.getElementById('ctaButton');
             const judgeInstructions = document.getElementById('judgeInstructions');
+            const downloadMessageEl = document.getElementById('downloadMessage'); // Get the new message element
 
             // Apply theme
             async function applySavedTheme() {
@@ -228,12 +267,20 @@
                 ctaButton.style.hoverBackgroundColor = '#45a049';
                 ctaButton.addEventListener('click', () => {
                     const downloadLink = document.createElement('a');
-                    downloadLink.href = 'price_watcher_extension_source.zip'; // Assumes zip is in the same directory
-                    downloadLink.download = 'price_watcher_extension_source.zip';
+                    downloadLink.href = 'https://github.com/IHarshith/price-watcher/archive/refs/heads/main.zip'; // GitHub ZIP download link
+                    downloadLink.download = 'price_watcher_extension_source.zip'; // Suggested filename for the downloaded file
                     document.body.appendChild(downloadLink);
                     downloadLink.click();
                     document.body.removeChild(downloadLink);
-                    alert('Your download should start shortly! Please note: You need to create the "price_watcher_extension_source.zip" file manually and place it in the same directory as landing.html.');
+                    
+                    // Display the custom message
+                    downloadMessageEl.textContent = 'Your download from GitHub should start shortly! For installation, please follow the "For Judges" instructions below.';
+                    downloadMessageEl.classList.add('success');
+                    downloadMessageEl.classList.add('visible'); 
+                    setTimeout(() => {
+                        downloadMessageEl.classList.remove('visible'); 
+                        downloadMessageEl.classList.remove('success'); 
+                    }, 8000); // Keep visible for 8 seconds
                 });
                 judgeInstructions.style.display = 'block'; // Instructions are still relevant for judges who download
             }
